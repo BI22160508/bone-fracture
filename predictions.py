@@ -3,48 +3,39 @@ import tensorflow as tf
 from keras.preprocessing import image
 import os
 
-# Get the absolute base path of the current script
-base_path = os.path.dirname(os.path.abspath(__file__))
+# Load models with error checking
+try:
+    model_elbow_frac = tf.keras.models.load_model("weights/ResNet50_Elbow_frac.h5")
+    model_hand_frac = tf.keras.models.load_model("weights/ResNet50_Hand_frac.h5")
+    model_shoulder_frac = tf.keras.models.load_model("weights/ResNet50_Shoulder_frac.h5")
+    model_parts = tf.keras.models.load_model("weights/ResNet50_BodyParts.h5")
+except OSError as e:
+    raise RuntimeError(f"Model loading failed: {e}")
 
-# Load the models with correct absolute paths
-model_elbow_frac = tf.keras.models.load_model(os.path.join(base_path, "weights", "ResNet50_Elbow_frac.h5"))
-model_hand_frac = tf.keras.models.load_model(os.path.join(base_path, "weights", "ResNet50_Hand_frac.h5"))
-model_shoulder_frac = tf.keras.models.load_model(os.path.join(base_path, "weights", "ResNet50_Shoulder_frac.h5"))
-model_parts = tf.keras.models.load_model(os.path.join(base_path, "weights", "ResNet50_BodyParts.h5"))
-
-# Label categories
 categories_parts = ["Elbow", "Hand", "Shoulder"]
-categories_fracture = ["fractured", "normal"]
+categories_fracture = ['fractured', 'normal']
 
-# Prediction function
-def predict(img, model="Parts"):
-    size = 224
-
-    # Select the appropriate model
-    if model == "Parts":
-        chosen_model = model_parts
-    else:
-        if model == "Elbow":
-            chosen_model = model_elbow_frac
-        elif model == "Hand":
-            chosen_model = model_hand_frac
-        elif model == "Shoulder":
-            chosen_model = model_shoulder_frac
+def predict(img_path, model="Parts"):
+    try:
+        size = 224
+        if model == 'Parts':
+            chosen_model = model_parts
         else:
-            raise ValueError(f"Unknown model: {model}")
+            model_map = {
+                'Elbow': model_elbow_frac,
+                'Hand': model_hand_frac,
+                'Shoulder': model_shoulder_frac
+            }
+            chosen_model = model_map.get(model)
+            if chosen_model is None:
+                raise ValueError(f"Invalid model name: {model}")
 
-    # Preprocess image
-    temp_img = image.load_img(img, target_size=(size, size))
-    x = image.img_to_array(temp_img)
-    x = np.expand_dims(x, axis=0)
-    images = np.vstack([x])
+        temp_img = image.load_img(img_path, target_size=(size, size))
+        x = image.img_to_array(temp_img)
+        x = np.expand_dims(x, axis=0)
+        prediction = np.argmax(chosen_model.predict(x), axis=1)
 
-    # Predict
-    prediction = np.argmax(chosen_model.predict(images), axis=1)
+        return categories_parts[prediction.item()] if model == 'Parts' else categories_fracture[prediction.item()]
 
-    # Return human-readable label
-    if model == "Parts":
-        return categories_parts[prediction.item()]
-    else:
-        return categories_fracture[prediction.item()]
-
+    except Exception as e:
+        return f"Prediction error: {str(e)}"
