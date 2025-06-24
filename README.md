@@ -18,33 +18,42 @@ The data set we used called MURA and included 3 different bone parts, MURA is a 
 
 The data is separated into train and valid where each folder contains a folder of a patient and for each patient between 1-3 images for the same bone part
 
-## Algorithm
+## ⚙️ Model Architecture
+
+- **Backbone:** ResNet50 (pretrained on ImageNet, frozen)
+- **Layers Added:**
+  - Global Average Pooling
+  - Dense (128 units, ReLU)
+  - Dense (50 units, ReLU)
+  - Output (3 units, Softmax)
+- **Optimizer:** Adam (lr=0.0001)
+- **Loss:** Categorical Crossentropy
+- **Input Shape:** 224×224 RGB images
+
+---
+
+## 📊 Results
+
+- **Test Accuracy:** ~85–90% (varies with tuning)
+- **Plots:** Accuracy & Loss over training epochs
+- **Early Stopping** prevents overfitting
 
 
-## Results
-### Body Part Prediction
+## 🖥️ Streamlit Web App
 
+The app allows:
+- Uploading X-ray images
+- Predicting the **bone type**
+- (Optional) Predicting **fracture status**
+- Displaying model confidence and charts
 
+---
 
-### Fracture Prediction
-#### Elbow
+## 🐳 Docker & Cloud Deployment
 
+### Build Docker Image
 
-#### Hand
-
-#### Shoulder
-
-
-# Installations
-
-
-### Install requirements.txt
-
-
-
-### Info-Rules
-
-### Test Normal & Fractured
-
+```bash
+docker build -t gcr.io/YOUR_PROJECT_ID/bone-fracture-app .
 
 
