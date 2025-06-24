@@ -34,7 +34,7 @@ The data is separated into train and valid where each folder contains a folder o
 
 ## 📊 Results
 
-- **Test Accuracy:** ~85–90% (varies with tuning)
+- **Test Accuracy:** ~75–80% (varies with tuning)
 - **Plots:** Accuracy & Loss over training epochs
 - **Early Stopping** prevents overfitting
 
