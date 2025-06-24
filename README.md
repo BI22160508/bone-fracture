@@ -46,6 +46,7 @@ The app allows:
 - Predicting the **bone type**
 - (Optional) Predicting **fracture status**
 - Displaying model confidence and charts
+- Grad-CAM heatmap visualization
 
 ---
 
