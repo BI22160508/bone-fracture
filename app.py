@@ -103,9 +103,7 @@ if uploaded_file:
     img_array = np.expand_dims(img_array, axis=0)
 
     # Predict body part
-    body_model = load_body_part_model()
-    body_classes = ["Elbow", "Hand", "Shoulder"]
-    body_result = body_classes[np.argmax(body_model.predict(img_array))]
+    body_result = predict(uploaded_file, "Parts")
 
     # Predict fracture
     fracture_model = load_fracture_model(body_result)
