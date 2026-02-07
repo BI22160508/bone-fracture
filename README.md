@@ -50,7 +50,7 @@ The app allows:
 
 ---
 
-## 🐳 Docker & Cloud Deployment
+## 🐳 Docker & Cloud Deployment (cloud are expired and cannot be accessed)
 
 ### Build Docker Image
 
